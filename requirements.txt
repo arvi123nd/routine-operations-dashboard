@@ -1,0 +1,36 @@
+# ================================================================
+# OPTIMIZED Production Requirements
+# Performance-focused with caching and async support
+# ================================================================
+
+# Web Framework
+Flask==3.0.0
+Flask-CORS==4.0.0
+Werkzeug==3.0.1
+
+# Production WSGI Server (OPTIMIZED)
+gunicorn==21.2.0
+gevent==23.9.1  # Async worker support
+
+# Database (OPTIMIZED with C extensions)
+mysql-connector-python==8.0.33
+
+# PDF Generation
+reportlab==4.0.7
+
+# Caching (CRITICAL for performance)
+Flask-Caching==2.1.0
+redis==5.0.1
+hiredis==2.2.3  # Faster Redis protocol parser
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Security
+cryptography==41.0.7
+
+# Monitoring (Optional but recommended)
+prometheus-flask-exporter==0.23.0
+
+# Performance Tools
+ujson==5.8.0  # Faster JSON parsing

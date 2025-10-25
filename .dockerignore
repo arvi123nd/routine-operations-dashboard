@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/
+README.md
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Logs
+logs/
+*.log
+
+# Backups
+backups/
+
+# Environment
+.env
+.env.*
+
+# CI/CD
+.github/
+
+# Scripts (not needed in container)
+scripts/deploy.sh
+scripts/backup.sh
+
+# Config (loaded via volumes)
+config/

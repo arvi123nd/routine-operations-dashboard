@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routine Operations Dashboard - Production Ready</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2C2C2C 0%, #404040 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #FFB084;
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .date-filter-container {
+            background: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .date-filter-label {
+            font-weight: 600;
+            color: #2C2C2C;
+        }
+
+        .date-dropdown {
+            padding: 10px 15px;
+            border: 2px solid #FF8C42;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            min-width: 180px;
+            transition: all 0.3s;
+        }
+
+        .date-dropdown:hover {
+            border-color: #FF6B35;
+            box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
+        }
+
+        .custom-date-inputs {
+            display: none;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .custom-date-inputs.active {
+            display: flex;
+        }
+
+        .date-input {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .apply-btn, .refresh-btn {
+            padding: 10px 20px;
+            background: #FF8C42;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .apply-btn:hover, .refresh-btn:hover {
+            background: #FF6B35;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 140, 66, 0.3);
+        }
+
+        .dashboard-container {
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+        }
+
+        .card.clickable {
+            cursor: pointer;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2C2C2C;
+        }
+
+        .loading {
+            display: none;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+            position: relative;
+        }
+
+        .chart-wrapper {
+            width: 280px;
+            height: 280px;
+            position: relative;
+        }
+
+        .sso-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            border-radius: 12px;
+            color: white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .metric-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .sso-chart-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+
+        .sso-chart-title {
+            text-align: center;
+            color: #2C2C2C;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        #map {
+            height: 100%;
+            min-height: 400px;
+            border-radius: 12px;
+        }
+
+        .map-card {
+            height: 500px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #FF8C42;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2C2C2C;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #FF6B35;
+            transform: rotate(90deg);
+        }
+
+        .download-pdf-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .download-pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-fail {
+            background: #F44336;
+            color: white;
+        }
+
+        .summary-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1>🚀 Routine Operations Dashboard</h1>
+            <p>Tenant: TEST_COMPANY | SubTenant: TEST_DEPARTMENT | Real-time Data</p>
+        </div>
+        <div class="header-right">
+            <button class="refresh-btn" onclick="refreshData()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <div class="date-filter-container">
+        <span class="date-filter-label"><i class="fas fa-calendar-alt"></i> Date Range:</span>
+        
+        <select class="date-dropdown" id="dateRangeSelect" onchange="handleDateRangeChange()">
+            <option value="today">Today</option>
+            <option value="last7" selected>Last 7 Days</option>
+            <option value="last30">Last 30 Days</option>
+            <option value="thisMonth">This Month</option>
+            <option value="custom">Custom Range</option>
+        </select>
+
+        <div class="custom-date-inputs" id="customDateInputs">
+            <input type="text" class="date-input" id="startDate" placeholder="Start Date">
+            <span>to</span>
+            <input type="text" class="date-input" id="endDate" placeholder="End Date">
+            <button class="apply-btn" onclick="applyCustomDateRange()">Apply</button>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- LOGIN CARD -->
+        <div class="card clickable" id="loginCard">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <span class="loading" id="loginLoading">Loading...</span>
+            </div>
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="loginChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD CARD -->
+        <div class="card clickable" id="passwordCard">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-key"></i> Forgot Password</h2>
+                <span class="loading" id="passwordLoading">Loading...</span>
+            </div>
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="passwordChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- SSO CARD WITH CLICKABLE BOXES -->
+        <div class="card" id="ssoCard">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-lock"></i> Single Sign On</h2>
+                <span class="loading" id="ssoLoading">Loading...</span>
+            </div>
+            
+            <!-- CLICKABLE METRIC BOXES -->
+            <div class="sso-metrics">
+                <div class="metric-box" onclick="showSSOUsers(event)" title="Click to see user list">
+                    <div class="metric-value" id="uniqueUsers">0</div>
+                    <div class="metric-label"><i class="fas fa-users"></i> Unique Users</div>
+                </div>
+                
+                <div class="metric-box" onclick="showSSOApps(event)" title="Click to see apps list">
+                    <div class="metric-value" id="uniqueApps">0</div>
+                    <div class="metric-label"><i class="fas fa-th"></i> Connected Apps</div>
+                </div>
+                
+                <div class="metric-box" onclick="showSSOSessions(event)" title="Click to see all sessions">
+                    <div class="metric-value" id="totalSessions">0</div>
+                    <div class="metric-label"><i class="fas fa-list"></i> Total Sessions</div>
+                </div>
+            </div>
+            
+            <!-- BAR CHART -->
+            <div class="sso-chart-container">
+                <div class="sso-chart-title">📊 Application Usage</div>
+                <canvas id="ssoChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+
+        <!-- ACCESS MAP CARD -->
+        <div class="card clickable map-card" onclick="showAccessMap()">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-map-marked-alt"></i> Access Map</h2>
+                <span class="loading" id="mapLoading">Loading...</span>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Details</h2>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button class="download-pdf-btn" id="downloadPdfBtn">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </button>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        let tenantId = 22;
+        let subtenantId = 13;
+        let currentStartDate = '';
+        let currentEndDate = '';
+        let loginChart = null;
+        let passwordChart = null;
+        let ssoChart = null;
+        let map = null;
+        let currentReportType = '';
+        let currentStatus = '';
+
+        console.log('🚀 Dashboard Initializing - Production Ready with Real-time Data');
+
+        // Initialize flatpickr
+        if (typeof flatpickr !== 'undefined') {
+            flatpickr("#startDate", {
+                dateFormat: "Y-m-d",
+                maxDate: "today"
+            });
+
+            flatpickr("#endDate", {
+                dateFormat: "Y-m-d",
+                maxDate: "today"
+            });
+        }
+
+        // DATE HANDLING
+        function handleDateRangeChange() {
+            const selectValue = document.getElementById('dateRangeSelect').value;
+            const customInputs = document.getElementById('customDateInputs');
+            
+            if (selectValue === 'custom') {
+                customInputs.classList.add('active');
+            } else {
+                customInputs.classList.remove('active');
+                setDateRange(selectValue);
+                refreshData();
+            }
+        }
+
+        function setDateRange(range) {
+            const today = new Date();
+            let start, end;
+
+            switch(range) {
+                case 'today':
+                    start = end = today;
+                    break;
+                case 'last7':
+                    start = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    end = today;
+                    break;
+                case 'last30':
+                    start = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    end = today;
+                    break;
+                case 'thisMonth':
+                    start = new Date(today.getFullYear(), today.getMonth(), 1);
+                    end = today;
+                    break;
+            }
+
+            currentStartDate = formatDate(start);
+            currentEndDate = formatDate(end);
+            console.log('📅 Date range set:', currentStartDate, 'to', currentEndDate);
+        }
+
+        function applyCustomDateRange() {
+            const startInput = document.getElementById('startDate').value;
+            const endInput = document.getElementById('endDate').value;
+
+            if (startInput && endInput) {
+                currentStartDate = startInput;
+                currentEndDate = endInput;
+                console.log('📅 Custom date range applied:', currentStartDate, 'to', currentEndDate);
+                refreshData();
+            } else {
+                alert('Please select both start and end dates');
+            }
+        }
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // REFRESH ALL DATA
+        function refreshData() {
+            console.log('🔄 Refreshing all data...');
+            fetchLoginMetrics();
+            fetchPasswordMetrics();
+            fetchSSOMetrics();
+            fetchAccessMapData();
+        }
+
+        // LOGIN METRICS
+        function fetchLoginMetrics() {
+            document.getElementById('loginLoading').style.display = 'inline';
+            
+            const url = `/api/metrics/login?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Login data:', data);
+                    document.getElementById('loginLoading').style.display = 'none';
+                    updateLoginChart(data);
+                })
+                .catch(error => {
+                    console.error('❌ Login error:', error);
+                    document.getElementById('loginLoading').style.display = 'none';
+                });
+        }
+
+        function updateLoginChart(data) {
+            const canvas = document.getElementById('loginChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            
+            if (loginChart) {
+                loginChart.destroy();
+            }
+
+            const total = data.success + data.fail;
+
+            loginChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Success', 'Fail'],
+                    datasets: [{
+                        data: [data.success, data.fail],
+                        backgroundColor: ['#4CAF50', '#F44336'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    return data.labels.map((label, i) => ({
+                                        text: `${label}: ${data.datasets[0].data[i]}`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    }));
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const status = index === 0 ? 'SUCCESS' : 'FAIL';
+                            showLoginUsers(status);
+                        }
+                    }
+                }
+            });
+        }
+
+        // PASSWORD METRICS
+        function fetchPasswordMetrics() {
+            document.getElementById('passwordLoading').style.display = 'inline';
+            
+            const url = `/api/metrics/password?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Password data:', data);
+                    document.getElementById('passwordLoading').style.display = 'none';
+                    updatePasswordChart(data);
+                })
+                .catch(error => {
+                    console.error('❌ Password error:', error);
+                    document.getElementById('passwordLoading').style.display = 'none';
+                });
+        }
+
+        function updatePasswordChart(data) {
+            const canvas = document.getElementById('passwordChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            
+            if (passwordChart) {
+                passwordChart.destroy();
+            }
+
+            const total = data.success + data.fail;
+
+            passwordChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Success', 'Fail'],
+                    datasets: [{
+                        data: [data.success, data.fail],
+                        backgroundColor: ['#4CAF50', '#F44336'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    return data.labels.map((label, i) => ({
+                                        text: `${label}: ${data.datasets[0].data[i]}`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        hidden: false,
+                                        index: i
+                                    }));
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const status = index === 0 ? 'SUCCESS' : 'FAIL';
+                            showPasswordUsers(status);
+                        }
+                    }
+                }
+            });
+        }
+
+        // SSO METRICS
+        function fetchSSOMetrics() {
+            document.getElementById('ssoLoading').style.display = 'inline';
+            
+            const url1 = `/api/metrics/sso?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+            const url2 = `/api/metrics/sso/apps?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+            
+            Promise.all([
+                fetch(url1).then(r => r.json()),
+                fetch(url2).then(r => r.json())
+            ]).then(([summary, apps]) => {
+                console.log('✅ SSO summary:', summary);
+                console.log('✅ SSO apps:', apps);
+                document.getElementById('ssoLoading').style.display = 'none';
+                document.getElementById('uniqueUsers').textContent = summary.unique_users;
+                document.getElementById('uniqueApps').textContent = summary.unique_apps;
+                document.getElementById('totalSessions').textContent = summary.total_sessions;
+                updateSSOChart(apps);
+            }).catch(error => {
+                console.error('❌ SSO error:', error);
+                document.getElementById('ssoLoading').style.display = 'none';
+            });
+        }
+
+        function updateSSOChart(appsData) {
+            const canvas = document.getElementById('ssoChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            if (ssoChart) {
+                ssoChart.destroy();
+            }
+            
+            if (appsData.length === 0) {
+                console.log('ℹ️ No SSO app data');
+                return;
+            }
+            
+            const apps = appsData.slice(0, 8);
+            const labels = apps.map(a => a.app);
+            const data = apps.map(a => a.count);
+            
+            ssoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sessions',
+                        data: data,
+                        backgroundColor: '#FF8C42',
+                        borderColor: '#FF6B35',
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Sessions: ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // SSO CLICKABLE BOXES - UNIQUE USERS
+        function showSSOUsers(event) {
+            if (event) event.stopPropagation();
+            
+            currentReportType = 'sso-unique-users';
+            currentStatus = '';
+            
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-users"></i> SSO - Unique Users';
+            document.getElementById('userModal').classList.add('active');
+            
+            console.log('👥 Fetching SSO unique users');
+            
+            fetch(`/api/metrics/sso/unique-users?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Received ${data.length} unique users`);
+                    displayUserTable(data, ['user', 'total_sessions', 'apps_used', 'last_login']);
+                })
+                .catch(error => console.error('❌ Error:', error));
+        }
+
+        // SSO CLICKABLE BOXES - APPS LIST
+        function showSSOApps(event) {
+            if (event) event.stopPropagation();
+            
+            currentReportType = 'sso-apps-list';
+            currentStatus = '';
+            
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-th"></i> SSO - Connected Applications';
+            document.getElementById('userModal').classList.add('active');
+            
+            console.log('📱 Fetching SSO apps list');
+            
+            fetch(`/api/metrics/sso/apps-list?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Received ${data.length} apps`);
+                    displayUserTable(data, ['app', 'total_sessions', 'users_count', 'last_used']);
+                })
+                .catch(error => console.error('❌ Error:', error));
+        }
+
+        // SSO CLICKABLE BOXES - ALL SESSIONS
+        function showSSOSessions(event) {
+            if (event) event.stopPropagation();
+            
+            currentReportType = 'sso-sessions';
+            currentStatus = '';
+            
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-list"></i> SSO - All Sessions';
+            document.getElementById('userModal').classList.add('active');
+            
+            console.log('📋 Fetching SSO sessions');
+            
+            fetch(`/api/metrics/sso/sessions?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Received ${data.length} sessions`);
+                    displayUserTable(data, ['user', 'app', 'ip', 'timestamp']);
+                })
+                .catch(error => console.error('❌ Error:', error));
+        }
+
+        // MAP
+        function initMap() {
+            if (typeof L === 'undefined') {
+                console.error('❌ Leaflet not loaded');
+                return;
+            }
+
+            map = L.map('map').setView([20, 0], 2);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
+                maxZoom: 18
+            }).addTo(map);
+            
+            console.log('✅ Map initialized');
+        }
+
+        function fetchAccessMapData() {
+            document.getElementById('mapLoading').style.display = 'inline';
+            
+            const url = `/api/metrics/access-map?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Access map: ${data.length} IPs`);
+                    document.getElementById('mapLoading').style.display = 'none';
+                    updateMap(data);
+                })
+                .catch(error => {
+                    console.error('❌ Access map error:', error);
+                    document.getElementById('mapLoading').style.display = 'none';
+                });
+        }
+
+        function updateMap(data) {
+            if (!map) return;
+
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            data.forEach((item, index) => {
+                const lat = 20 + (Math.random() - 0.5) * 120;
+                const lng = (Math.random() - 0.5) * 360;
+                
+                const marker = L.marker([lat, lng]).addTo(map);
+                marker.bindPopup(`
+                    <b>IP: ${item.ip}</b><br>
+                    Access: ${item.count}<br>
+                    Users: ${item.users}<br>
+                    Successful: ${item.successful}<br>
+                    Last: ${item.last_access}
+                `);
+            });
+        }
+
+        // MODAL FUNCTIONS
+        function showAccessMap() {
+            currentReportType = 'access-map';
+            currentStatus = '';
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-map-marked-alt"></i> Access Map Details';
+            document.getElementById('userModal').classList.add('active');
+            
+            fetch(`/api/metrics/access-map?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayAccessTable(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayAccessTable(data) {
+            let html = '<table class="data-table"><thead><tr>';
+            html += '<th>IP ADDRESS</th><th>ACCESS COUNT</th><th>UNIQUE USERS</th><th>SUCCESSFUL</th><th>LAST ACCESS</th>';
+            html += '</tr></thead><tbody>';
+            
+            if (data.length > 0) {
+                data.forEach(row => {
+                    html += '<tr>';
+                    html += `<td>${row.ip}</td>`;
+                    html += `<td><strong>${row.count}</strong></td>`;
+                    html += `<td>${row.users}</td>`;
+                    html += `<td>${row.successful}</td>`;
+                    html += `<td>${row.last_access}</td>`;
+                    html += '</tr>';
+                });
+            } else {
+                html += '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">No data available</td></tr>';
+            }
+            
+            html += '</tbody></table>';
+            
+            if (data.length > 0) {
+                html += `<div class="summary-box"><strong>Total Records:</strong> ${data.length}</div>`;
+            }
+            
+            document.getElementById('modalContent').innerHTML = html;
+        }
+
+        function showLoginUsers(status) {
+            currentReportType = 'login';
+            currentStatus = status;
+            
+            document.getElementById('modalTitle').innerHTML = `<i class="fas fa-sign-in-alt"></i> Login - ${status}`;
+            document.getElementById('userModal').classList.add('active');
+            
+            console.log(`🔐 Fetching login users: ${status}`);
+            
+            fetch(`/api/metrics/login/users?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}&status=${status}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Received ${data.length} login users`);
+                    displayUserTable(data, ['user', 'ip', 'timestamp', 'status']);
+                })
+                .catch(error => console.error('❌ Error:', error));
+        }
+
+        function showPasswordUsers(status) {
+            currentReportType = 'password';
+            currentStatus = status;
+            
+            document.getElementById('modalTitle').innerHTML = `<i class="fas fa-key"></i> Password Reset - ${status}`;
+            document.getElementById('userModal').classList.add('active');
+            
+            console.log(`🔑 Fetching password users: ${status}`);
+            
+            fetch(`/api/metrics/password/users?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}&status=${status}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`✅ Received ${data.length} password users`);
+                    displayUserTable(data, ['user', 'timestamp', 'status']);
+                })
+                .catch(error => console.error('❌ Error:', error));
+        }
+
+        function displayUserTable(data, columns) {
+            const columnLabels = {
+                'user': 'USER',
+                'total_sessions': 'TOTAL SESSIONS',
+                'apps_used': 'APPS USED',
+                'last_login': 'LAST LOGIN',
+                'app': 'APPLICATION',
+                'users_count': 'USERS COUNT',
+                'last_used': 'LAST USED',
+                'ip': 'IP ADDRESS',
+                'timestamp': 'TIMESTAMP',
+                'status': 'STATUS',
+                'session_count': 'SESSION COUNT',
+                'last_access': 'LAST ACCESS'
+            };
+            
+            let html = '<table class="data-table"><thead><tr>';
+            
+            columns.forEach(col => {
+                const label = columnLabels[col] || col.replace('_', ' ').toUpperCase();
+                html += `<th>${label}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            if (data.length > 0) {
+                data.forEach(row => {
+                    html += '<tr>';
+                    columns.forEach(col => {
+                        let value = row[col] || 'N/A';
+                        
+                        if (col === 'status') {
+                            const badgeClass = value === 'SUCCESS' ? 'status-success' : 'status-fail';
+                            value = `<span class="status-badge ${badgeClass}">${value}</span>`;
+                        }
+                        
+                        if (col === 'timestamp' || col === 'last_access' || col === 'last_login' || col === 'last_used') {
+                            value = String(value).substring(0, 19);
+                        }
+                        
+                        if (col === 'total_sessions' || col === 'apps_used' || col === 'users_count' || col === 'session_count') {
+                            value = `<strong>${value}</strong>`;
+                        }
+                        
+                        html += `<td>${value}</td>`;
+                    });
+                    html += '</tr>';
+                });
+            } else {
+                html += `<tr><td colspan="${columns.length}" style="text-align: center; padding: 40px; color: #999;">No data available</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            
+            if (data.length > 0) {
+                html += `<div class="summary-box"><strong>Total Records:</strong> ${data.length}</div>`;
+            }
+            
+            document.getElementById('modalContent').innerHTML = html;
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        // PDF DOWNLOAD
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const url = `/api/generate-pdf/${currentReportType}?tenant_id=${tenantId}&subtenant_id=${subtenantId}&start_date=${currentStartDate}&end_date=${currentEndDate}&status=${currentStatus}`;
+            console.log('📄 Downloading PDF:', url);
+            window.open(url, '_blank');
+        });
+
+        // CLOSE MODAL ON OUTSIDE CLICK
+        window.onclick = function(event) {
+            const modal = document.getElementById('userModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // INITIALIZATION
+        console.log('=== Dashboard Initialization ===');
+        console.log('Chart.js:', typeof Chart !== 'undefined' ? '✅' : '❌');
+        console.log('Leaflet:', typeof L !== 'undefined' ? '✅' : '❌');
+
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('📱 DOM Content Loaded');
+            
+            setTimeout(function() {
+                console.log('🚀 Starting initialization...');
+                setDateRange('last7');
+                initMap();
+                refreshData();
+                console.log('✅ Initialization complete');
+                console.log('♻️ Auto-refresh every 30 seconds');
+            }, 500);
+        });
+
+        // AUTO-REFRESH EVERY 30 SECONDS
+        setInterval(function() {
+            console.log('♻️ Auto-refreshing data...');
+            refreshData();
+        }, 30000);
+    </script>
+</body>
+</html>

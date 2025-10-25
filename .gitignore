@@ -1,0 +1,47 @@
+@"
+# Environment variables (NEVER COMMIT!)
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Docker volumes
+mysql_data/
+redis_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Backups
+*.backup
+*.bak
+
+# Test data
+test_data/
+
+# Uploads
+uploads/
+temp/
+"@ | Out-File -FilePath .gitignore -Encoding UTF8
