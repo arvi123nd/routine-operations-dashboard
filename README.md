@@ -160,7 +160,7 @@ OPTIMIZED_PRODUCTION/
 
 ```sql
 -- Covering index for login queries
-CREATE INDEX idx_login_tenant_time 
+CREATE INDEX idx_login_tenant_time
 ON idx2_audit_login(tenant, subtenant, timestamp, status);
 ```
 
@@ -282,7 +282,7 @@ map = L.map('map').setView([20, 0], 2);
 
 // Backend: Optimized query
 query = """
-    SELECT 
+    SELECT
         ip,
         COUNT(*) as access_count,
         COUNT(DISTINCT user) as unique_users
@@ -538,13 +538,66 @@ tail -f /var/log/mysql/slow.log
 
 ---
 
+## ☁️ **AWS DEPLOYMENT**
+
+Deploy to AWS using Terraform and GitHub Actions.
+
+### Quick Start
+
+```bash
+# 1. Navigate to terraform directory
+cd terraform
+
+# 2. Initialize Terraform
+terraform init
+
+# 3. Review and apply infrastructure
+terraform plan
+terraform apply
+
+# 4. GitHub Actions automatically:
+#    - Builds Docker image
+#    - Pushes to ECR
+#    - Deploys to ECS Fargate
+```
+
+### Infrastructure Includes
+
+✅ **ECS Fargate** - Containerized app deployment
+✅ **RDS MySQL** - Managed database
+✅ **ElastiCache Redis** - In-memory cache
+✅ **Application Load Balancer** - HTTPS termination
+✅ **S3 Bucket** - Static assets storage
+✅ **Secrets Manager** - Secure credentials
+✅ **CloudWatch** - Logs & monitoring
+✅ **Auto-scaling** - Dynamic capacity
+
+### Documentation
+
+- **[AWS_QUICKSTART.md](AWS_QUICKSTART.md)** - Quick reference
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide
+- **[ENVIRONMENTS.md](ENVIRONMENTS.md)** - Environment configurations
+- **[terraform/README.md](terraform/README.md)** - Infrastructure details
+
+### GitHub Actions CI/CD
+
+Automatic deployment on push:
+- Builds Docker image
+- Runs security scanning (Trivy)
+- Pushes to ECR repository
+- Updates ECS service
+- Validates Terraform plan on PRs
+
+---
+
 ## 📞 **SUPPORT**
 
 For issues:
-1. Check logs: `docker-compose logs app`
+1. Check logs: `docker-compose logs app` (local) or `aws logs tail /ecs/...` (AWS)
 2. Verify indexes: Run migrations/001_create_indexes.sql
 3. Check Redis: `redis-cli PING`
-4. Review docs: README.md
+4. Review docs: README.md, DEPLOYMENT.md
+5. Infrastructure: See terraform/README.md
 
 ---
 

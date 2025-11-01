@@ -1,0 +1,12 @@
+aws_region             = "us-east-1"
+environment            = "dev"
+app_name               = "routine-operations-dashboard"
+docker_image_tag       = "latest"
+container_port         = 5000
+container_cpu          = 256
+container_memory       = 512
+desired_count          = 1
+vpc_cidr               = "10.0.0.0/16"
+rds_allocated_storage  = 20
+rds_instance_class     = "db.t3.micro"
+redis_node_type        = "cache.t3.micro"
