@@ -253,12 +253,12 @@ aws ecs describe-services \
 ## 🔗 Related Documentation
 
 ### Initial Deployment
-- [../SETUP_SUMMARY.md](../SETUP_SUMMARY.md) - What was created
-- [../DEPLOYMENT.md](../DEPLOYMENT.md) - How to deploy initially
+- [../docs/SETUP_SUMMARY.md](../docs/SETUP_SUMMARY.md) - What was created
+- [../docs/DEPLOYMENT.md](../docs/DEPLOYMENT.md) - How to deploy initially
 
 ### Infrastructure Details
-- [../ENVIRONMENTS.md](../ENVIRONMENTS.md) - Dev/prod configurations
-- [../AWS_QUICKSTART.md](../AWS_QUICKSTART.md) - Common commands
+- [../docs/ENVIRONMENTS.md](../docs/ENVIRONMENTS.md) - Dev/prod configurations
+- [../docs/AWS_QUICKSTART.md](../docs/AWS_QUICKSTART.md) - Common commands
 - [../../terraform/README.md](../../terraform/README.md) - Terraform details
 
 ---

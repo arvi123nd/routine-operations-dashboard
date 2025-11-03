@@ -308,7 +308,7 @@ docker-compose up -d --scale app=4
 2. Verify indexes: Run migrations
 3. Check Redis: `docker-compose exec redis redis-cli PING`
 4. Review README.md
-5. Check OPTIMIZATION_GUIDE.md
+5. Check docs/OPTIMIZATION_GUIDE.md
 
 ---
 
@@ -343,7 +343,7 @@ Once running:
 
 **Need more help? Check:**
 - README.md - Complete documentation
-- OPTIMIZATION_GUIDE.md - Performance details
+- docs/OPTIMIZATION_GUIDE.md - Performance details
 - docker-compose.yml - Configuration reference
 -----
 # Generate SSH key if you don't have one

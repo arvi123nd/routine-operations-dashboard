@@ -574,9 +574,9 @@ terraform apply
 
 ### Documentation
 
-- **[AWS_QUICKSTART.md](AWS_QUICKSTART.md)** - Quick reference
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide
-- **[ENVIRONMENTS.md](ENVIRONMENTS.md)** - Environment configurations
+- **[docs/AWS_QUICKSTART.md](docs/AWS_QUICKSTART.md)** - Quick reference
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Complete deployment guide
+- **[docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md)** - Environment configurations
 - **[terraform/README.md](terraform/README.md)** - Infrastructure details
 
 ### GitHub Actions CI/CD
@@ -596,7 +596,7 @@ For issues:
 1. Check logs: `docker-compose logs app` (local) or `aws logs tail /ecs/...` (AWS)
 2. Verify indexes: Run migrations/001_create_indexes.sql
 3. Check Redis: `redis-cli PING`
-4. Review docs: README.md, DEPLOYMENT.md
+4. Review docs: README.md, docs/DEPLOYMENT.md
 5. Infrastructure: See terraform/README.md
 
 ---

@@ -287,9 +287,9 @@ watch -n 5 'aws ecs describe-services \
     └── Ready-to-use Terraform configuration
 
 Other Supporting Files:
-- SETUP_SUMMARY.md - Overview of what's been created
-- DEPLOYMENT.md - Initial deployment instructions
-- ENVIRONMENTS.md - Environment configurations
+- docs/SETUP_SUMMARY.md - Overview of what's been created
+- docs/DEPLOYMENT.md - Initial deployment instructions
+- docs/ENVIRONMENTS.md - Environment configurations
 ```
 
 ---

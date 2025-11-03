@@ -23,10 +23,10 @@
   - Terraform plan validation on PRs
 
 ### 3. **Documentation**
-- ✅ `DEPLOYMENT.md` - Complete step-by-step deployment guide
-- ✅ `ENVIRONMENTS.md` - Environment configurations and best practices
-- ✅ `AWS_QUICKSTART.md` - Quick reference and common commands
-- ✅ `DEPLOYMENT_CHECKLIST.md` - Comprehensive pre-deployment checklist
+- ✅ `docs/DEPLOYMENT.md` - Complete step-by-step deployment guide
+- ✅ `docs/ENVIRONMENTS.md` - Environment configurations and best practices
+- ✅ `docs/AWS_QUICKSTART.md` - Quick reference and common commands
+- ✅ `docs/DEPLOYMENT_CHECKLIST.md` - Comprehensive pre-deployment checklist
 - ✅ Updated `README.md` - Added AWS deployment section
 - ✅ Updated `AWS_Infra_Proposal.md` - Project proposal (with updates)
 
@@ -158,10 +158,10 @@ aws elbv2 describe-load-balancers \
 | File | Purpose |
 |------|---------|
 | `terraform/README.md` | Infrastructure details and troubleshooting |
-| `DEPLOYMENT.md` | Complete step-by-step deployment guide |
-| `ENVIRONMENTS.md` | Dev/Prod configurations and cost estimates |
-| `AWS_QUICKSTART.md` | Quick reference for common commands |
-| `DEPLOYMENT_CHECKLIST.md` | Pre-deployment verification |
+| `docs/DEPLOYMENT.md` | Complete step-by-step deployment guide |
+| `docs/ENVIRONMENTS.md` | Dev/Prod configurations and cost estimates |
+| `docs/AWS_QUICKSTART.md` | Quick reference for common commands |
+| `docs/DEPLOYMENT_CHECKLIST.md` | Pre-deployment verification |
 | `.github/workflows/deploy.yml` | CI/CD pipeline definition |
 
 ## 🎯 Key Features

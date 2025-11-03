@@ -110,9 +110,9 @@ cat ../docs/scalability/SCALING_MONITORING_GUIDE.md
 - `terraform/prod-2000users.tfvars` - Production config for 2000+ users
 
 ### Related Documentation
-- `SETUP_SUMMARY.md` - Overview of infrastructure
-- `DEPLOYMENT.md` - Initial deployment
-- `ENVIRONMENTS.md` - Environment configurations
+- `docs/SETUP_SUMMARY.md` - Overview of infrastructure
+- `docs/DEPLOYMENT.md` - Initial deployment
+- `docs/ENVIRONMENTS.md` - Environment configurations
 
 ## ✅ Implementation Checklist
 

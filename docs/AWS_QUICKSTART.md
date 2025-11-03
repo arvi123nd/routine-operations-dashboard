@@ -192,8 +192,8 @@ alias scale-tasks='aws ecs update-service --cluster routine-operations-dashboard
 | `terraform/terraform.tfvars` | Dev environment values |
 | `terraform/prod.tfvars` | Prod environment values |
 | `.github/workflows/deploy.yml` | CI/CD pipeline |
-| `DEPLOYMENT.md` | Full deployment guide |
-| `ENVIRONMENTS.md` | Environment configurations |
+| `docs/DEPLOYMENT.md` | Full deployment guide |
+| `docs/ENVIRONMENTS.md` | Environment configurations |
 
 ## Troubleshooting
 

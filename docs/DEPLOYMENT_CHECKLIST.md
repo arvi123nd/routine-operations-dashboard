@@ -87,9 +87,9 @@ Complete this checklist before deploying to production.
 ## Pre-Production Handoff
 
 ### Documentation
-- [ ] `DEPLOYMENT.md` reviewed and up-to-date
-- [ ] `ENVIRONMENTS.md` reviewed with prod config
-- [ ] `AWS_QUICKSTART.md` tested and working
+- [ ] `docs/DEPLOYMENT.md` reviewed and up-to-date
+- [ ] `docs/ENVIRONMENTS.md` reviewed with prod config
+- [ ] `docs/AWS_QUICKSTART.md` tested and working
 - [ ] Terraform outputs documented
 - [ ] Database credentials stored securely
 
