@@ -345,3 +345,15 @@ Once running:
 - README.md - Complete documentation
 - OPTIMIZATION_GUIDE.md - Performance details
 - docker-compose.yml - Configuration reference
+-----
+# Generate SSH key if you don't have one
+ssh-keygen -t ed25519 -C "arvi123nd@example.com"
+
+# Print the public key to copy into GitHub > Settings > SSH and GPG keys
+cat ~/.ssh/id_ed25519.pub
+
+# Switch remote to SSH
+git remote set-url origin git@github.com:arvi123nd/routine-operations-dashboard.git
+
+# Push
+git push -u origin arvi/aws-setup
